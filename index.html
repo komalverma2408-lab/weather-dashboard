@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Weather Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- Header -->
+        <header>
+            <h1>Weather Dashboard 🌦️</h1>
+            <p>Check the weather in your city</p>
+
+            <h2 id="greeting">Good Evening 👋</h2>
+            <p id="currentDate"></p>
+            <p id="currentTime"></p>
+        </header>
+
+
+        <!-- Search Section -->
+        <div class="search-box">
+            <input
+                type="text"
+                id="cityInput"
+                placeholder="Enter city name..."
+            >
+
+            <button id="searchBtn">Search</button>
+        </div>
+
+
+        <!-- Main Weather Card -->
+        <section class="weather-card">
+
+            <h2 id="cityName">Meerut</h2>
+
+            <div class="temperature">
+                <span id="temperature">28°C</span>
+            </div>
+
+            <button id="unitToggle">°F</button>
+
+            <p id="weatherCondition">Partly Cloudy ☁️</p>
+
+            <div class="weather-details">
+
+                <div>
+                    <h3>💨 Wind</h3>
+                    <p id="wind">12 km/h</p>
+                </div>
+
+                <div>
+                    <h3>💧 Humidity</h3>
+                    <p id="humidity">68%</p>
+                </div>
+
+                <div>
+                    <h3>🌡️ Pressure</h3>
+                    <p id="pressure">1012 hPa</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- 5-Day Forecast -->
+        <section class="forecast-section">
+
+            <h2>5-Day Forecast</h2>
+
+            <div
+                id="forecast-container"
+                class="forecast-container"
+            >
+                <!-- Forecast cards will be added by JavaScript -->
+            </div>
+
+        </section>
+
+
+        <!-- Temperature Chart -->
+        <section class="chart-section">
+
+            <h2>Temperature Trend 📈</h2>
+
+            <div class="chart-container">
+                <canvas id="temperatureChart"></canvas>
+            </div>
+
+        </section>
+
+
+        <!-- Recent Searches -->
+        <section class="history-section">
+
+            <h2>Recent Searches</h2>
+
+            <div
+                id="history-container"
+                class="history-container"
+            >
+                <p>Loading recent searches...</p>
+            </div>
+
+        </section>
+
+
+        <!-- Other Cities -->
+        <section class="cities-section">
+
+            <h2>Other Large Cities</h2>
+
+            <div class="city-cards">
+
+                <div class="city-card">
+                    <h3>Delhi</h3>
+                    <p>☀️ 30°C</p>
+                </div>
+
+                <div class="city-card">
+                    <h3>Mumbai</h3>
+                    <p>🌧️ 28°C</p>
+                </div>
+
+                <div class="city-card">
+                    <h3>Bangalore</h3>
+                    <p>☁️ 24°C</p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Main JavaScript -->
+    <script src="script.js"></script>
+
+</body>
+
+</html>
