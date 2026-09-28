@@ -597,3 +597,117 @@ body.theme-storm {
         right: 5px;
     }
 }
+
+/* ===== RECENT SEARCH ACTIONS ===== */
+
+.history-card {
+    cursor: pointer;
+    position: relative;
+}
+
+.history-city {
+    cursor: pointer;
+}
+
+.history-card-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.delete-history-btn {
+    border: none;
+    background: rgba(255, 80, 80, 0.15);
+    color: white;
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s ease;
+}
+
+.delete-history-btn:hover {
+    background: rgba(255, 80, 80, 0.35);
+    transform: scale(1.05);
+}
+
+.clear-history-btn {
+    margin-top: 18px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255, 80, 80, 0.15);
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.clear-history-btn:hover {
+    background: rgba(255, 80, 80, 0.3);
+}
+
+/* ===== RECENT SEARCH ACTIONS ===== */
+
+.history-card {
+    cursor: default;
+    position: relative;
+}
+
+.history-card-content {
+    text-align: center;
+}
+
+.history-city {
+    display: block;
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.history-city:hover {
+    text-decoration: underline;
+}
+
+.history-card-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.delete-history-btn {
+    border: none;
+    background: rgba(255, 80, 80, 0.15);
+    color: white;
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.3s ease;
+}
+
+.delete-history-btn:hover {
+    background: rgba(255, 80, 80, 0.35);
+    transform: scale(1.05);
+}
+
+.clear-history-btn {
+    display: block;
+    margin: 18px auto 0;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255, 80, 80, 0.15);
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.clear-history-btn:hover {
+    background: rgba(255, 80, 80, 0.3);
+    transform: translateY(-2px);
+}

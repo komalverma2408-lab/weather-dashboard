@@ -70,6 +70,10 @@ async function searchWeather() {
             `${data.wind_speed} km/h`;
 
 
+        /* Reset temperature toggle */
+        unitToggle.textContent = "°F";
+
+
         /* =================================
            WEATHER CONDITION
         ================================= */
@@ -214,8 +218,10 @@ function updateWeatherTheme(condition) {
 
         document.body.classList.add("theme-cloudy");
 
-    } else if (condition.includes("Rain") ||
-               condition.includes("Drizzle")) {
+    } else if (
+        condition.includes("Rain") ||
+        condition.includes("Drizzle")
+    ) {
 
         document.body.classList.add("theme-rain");
 
@@ -266,12 +272,6 @@ async function loadForecast(city) {
         ================================= */
 
         for (let i = 0; i < data.dates.length; i++) {
-
-            /*
-             * Adding T12:00:00 prevents the
-             * date from shifting because of
-             * timezone conversion.
-             */
 
             const date =
                 new Date(`${data.dates[i]}T12:00:00`);
@@ -353,21 +353,12 @@ function updateTemperatureChart(data) {
     }
 
 
-    /*
-     * Destroy old chart before creating
-     * a new one.
-     */
-
     if (temperatureChart) {
 
         temperatureChart.destroy();
 
     }
 
-
-    /* =================================
-       CREATE DAY LABELS
-    ================================= */
 
     const labels = data.dates.map(date => {
 
@@ -380,10 +371,6 @@ function updateTemperatureChart(data) {
 
     });
 
-
-    /* =================================
-       CREATE CHART
-    ================================= */
 
     temperatureChart = new Chart(canvas, {
 
@@ -580,12 +567,8 @@ function updateDateTime() {
 }
 
 
-/* Start date/time */
-
 updateDateTime();
 
-
-/* Update every second */
 
 setInterval(
     updateDateTime,
@@ -642,21 +625,14 @@ async function loadSearchHistory() {
 
     try {
 
-        const response =
-            await fetch(
-                "http://127.0.0.1:8000/history"
-            );
+        const response = await fetch(
+            "http://127.0.0.1:8000/history"
+        );
 
-
-        const history =
-            await response.json();
-
+        const history = await response.json();
 
         const historyContainer =
-            document.getElementById(
-                "history-container"
-            );
-
+            document.getElementById("history-container");
 
         historyContainer.innerHTML = "";
 
@@ -669,7 +645,6 @@ async function loadSearchHistory() {
                 "<p>No recent searches yet.</p>";
 
             return;
-
         }
 
 
@@ -680,22 +655,94 @@ async function loadSearchHistory() {
             const card =
                 document.createElement("div");
 
-
-            card.className =
-                "history-card";
+            card.className = "history-card";
 
 
             card.innerHTML = `
 
-                <span>
-                    📍 ${item.city}
-                </span>
+                <div class="history-card-content">
 
-                <small>
-                    ${item.country || ""}
-                </small>
+                    <span class="history-city">
+                        📍 ${item.city}
+                    </span>
+
+                    <small>
+                        ${item.country || ""}
+                    </small>
+
+                </div>
+
+
+                <div class="history-card-actions">
+
+                    <button
+                        class="delete-history-btn"
+                        type="button"
+                    >
+                        🗑️ Delete
+                    </button>
+
+                </div>
 
             `;
+
+
+            /* =================================
+               CLICK CITY → SEARCH AGAIN
+            ================================= */
+
+            const cityElement =
+                card.querySelector(".history-city");
+
+            cityElement.addEventListener(
+                "click",
+                function () {
+
+                    cityInput.value = item.city;
+
+                    searchWeather();
+
+                }
+            );
+
+
+            /* =================================
+               DELETE ONE CITY
+            ================================= */
+
+            const deleteButton =
+                card.querySelector(
+                    ".delete-history-btn"
+                );
+
+            deleteButton.addEventListener(
+                "click",
+                async function (event) {
+
+                    event.stopPropagation();
+
+                    try {
+
+                        await fetch(
+                            `http://127.0.0.1:8000/history/${encodeURIComponent(item.city)}`,
+                            {
+                                method: "DELETE"
+                            }
+                        );
+
+                        await loadSearchHistory();
+
+                    } catch (error) {
+
+                        console.log(
+                            "Delete history error:",
+                            error
+                        );
+
+                    }
+
+                }
+            );
 
 
             historyContainer.appendChild(card);
@@ -713,6 +760,42 @@ async function loadSearchHistory() {
     }
 
 }
+
+
+/* =========================================
+   CLEAR ALL SEARCH HISTORY
+========================================= */
+
+const clearHistoryBtn =
+    document.getElementById("clearHistoryBtn");
+
+
+clearHistoryBtn.addEventListener(
+    "click",
+    async function () {
+
+        try {
+
+            await fetch(
+                "http://127.0.0.1:8000/history",
+                {
+                    method: "DELETE"
+                }
+            );
+
+            await loadSearchHistory();
+
+        } catch (error) {
+
+            console.log(
+                "Clear history error:",
+                error
+            );
+
+        }
+
+    }
+);
 
 
 /* =========================================

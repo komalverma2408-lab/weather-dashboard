@@ -116,15 +116,61 @@ async def get_weather(city: str):
         # Save search history
         # -------------------------------
 
-        search_history.insert_one({
+        city_name = location["name"]
+        country_name = location.get("country")
 
-            "city": location["name"],
+        existing_searches = list(
+            search_history.find(
+                {
+                    "city": city_name,
+                    "country": country_name
+                }
+            ).sort("searched_at", -1)
+        )
 
-            "country": location.get("country"),
 
-            "searched_at": datetime.now()
+        if existing_searches:
 
-        })
+            # Keep the latest entry
+            latest_id = existing_searches[0]["_id"]
+
+            search_history.update_one(
+                {"_id": latest_id},
+                {
+                    "$set": {
+                        "searched_at": datetime.now()
+                    }
+                }
+            )
+
+
+            # Remove older duplicate entries
+            duplicate_ids = [
+                item["_id"]
+                for item in existing_searches[1:]
+            ]
+
+            if duplicate_ids:
+
+                search_history.delete_many(
+                    {
+                        "_id": {
+                            "$in": duplicate_ids
+                        }
+                    }
+                )
+
+        else:
+
+            search_history.insert_one({
+
+                "city": city_name,
+
+                "country": country_name,
+
+                "searched_at": datetime.now()
+
+            })
 
 
         # -------------------------------
@@ -133,9 +179,9 @@ async def get_weather(city: str):
 
         return {
 
-            "city": location["name"],
+            "city": city_name,
 
-            "country": location.get("country"),
+            "country": country_name,
 
             "temperature":
                 weather_data["current"]["temperature_2m"],
@@ -251,15 +297,107 @@ async def get_forecast(city: str):
 @app.get("/history")
 def get_history():
 
+    # Get all history so duplicate entries
+    # can also be cleaned automatically.
+
     history = list(
 
         search_history.find(
-            {},
-            {"_id": 0}
+            {}
         )
         .sort("searched_at", -1)
-        .limit(10)
 
     )
 
-    return history
+
+    unique_history = []
+
+    seen_cities = set()
+
+    duplicate_ids = []
+
+
+    for item in history:
+
+        city = item.get("city", "").strip().lower()
+
+        country = (
+            item.get("country") or ""
+        ).strip().lower()
+
+
+        city_key = (
+            city,
+            country
+        )
+
+
+        if city_key in seen_cities:
+
+            duplicate_ids.append(
+                item["_id"]
+            )
+
+            continue
+
+
+        seen_cities.add(city_key)
+
+
+        item.pop("_id", None)
+
+        unique_history.append(item)
+
+
+    # Remove duplicate database entries
+
+    if duplicate_ids:
+
+        search_history.delete_many(
+            {
+                "_id": {
+                    "$in": duplicate_ids
+                }
+            }
+        )
+
+
+    # Return only latest 10 unique searches
+
+    return unique_history[:10]
+
+
+# =========================================
+# DELETE ONE SEARCH
+# =========================================
+
+@app.delete("/history/{city}")
+def delete_history(city: str):
+
+    result = search_history.delete_many(
+        {
+            "city": city
+        }
+    )
+
+
+    return {
+        "message": "Search deleted",
+        "deleted_count": result.deleted_count
+    }
+
+
+# =========================================
+# CLEAR ALL SEARCH HISTORY
+# =========================================
+
+@app.delete("/history")
+def clear_history():
+
+    result = search_history.delete_many({})
+
+
+    return {
+        "message": "All search history cleared",
+        "deleted_count": result.deleted_count
+    }
